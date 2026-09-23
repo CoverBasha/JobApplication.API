@@ -2,6 +2,7 @@
 using JobApplication.Domain.Entities;
 using JobApplication.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace JobApplication.Infrastructure.Repositories
 {
@@ -20,9 +21,9 @@ namespace JobApplication.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task<Job?> GetJobByIdAsync(int jobId)
+        public async Task<Job?> GetJobByIdAsync(Guid jobId)
         {
-            return await context.Jobs.FindAsync(jobId);
+            return await context.Jobs.SingleOrDefaultAsync(j => j.Id == jobId);
         }
 
         public async Task<IEnumerable<Job>> GetAllJobsAsync()
@@ -36,13 +37,14 @@ namespace JobApplication.Infrastructure.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task CloseJob(Guid jobId)
+        public async Task<Job> CloseJob(Job job)
         {
-            var job = await context.Jobs.FirstOrDefaultAsync(j => j.Id == jobId) ?? 
-                throw new InvalidOperationException($"Job with ID {jobId} not found.");
 
             job.IsClosed = true;
+            job.ClosedAt = DateTime.UtcNow;
             await context.SaveChangesAsync();
+
+            return job;
         }
 
         public async Task DeleteJobAsync(int jobId)

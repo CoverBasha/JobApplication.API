@@ -42,25 +42,11 @@ namespace JobApplication.Application.Services
 
             return new ServiceResponse<JobDto>
             {
-                IsSuccess = true,
+                Status = Status.Success,
                 Message = "Job created successfully.",
                 Result = jobdto
             };
         }
 
-        public async Task<ServiceResponse<bool>> CloseJob(Guid jobId, Guid userId)
-        {
-            //Validation would be here when identity and roles are implemented.
-
-
-            await jobRepository.CloseJob(jobId);
-
-            return new()
-            {
-                IsSuccess = true,
-                Message = "Job closed successfully.",
-                Result = true
-            };
-        }
     }
 }
